@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Render csv</title>
+    <style type="text/css">
+        table.csvtable-table {
+            font-size: 12px;
+            border: 1px solid #CCC; 
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0 auto;
+            background-color: wheat;
+        } 
+        .csvtable-table td {
+            padding: 4px;
+            margin: 3px;
+            border: 1px solid #CCC;
+        }
+        .csvtable-table th {
+            background-color: #104E8B; 
+            color: #FFF;
+            font-weight: bold;
+        }
+        .disclaimer{
+            display:none !important;
+        }
+    </style>
+</head>
+<body>
+  <div class="row">
+    <form class="col s12">
+      <div class="row">
+        <div class="input-field col s12">
+          <input id="Buscar" type="text" class="validate">
+          <label for="Buscar"><strong>search</strong></label>
+        </div>
+      </div>
+    </form>
+  </div>
+</body>
+<script>
+  // create table 
+    function successFunction(data) {
+    var allRows = data.split(/\r?\n|\r/);
+    var table = '<table class="csvtable-table" id="Mitabla" style="padding: 0px;">';
+    for (var singleRow = 0; singleRow < allRows.length; singleRow++) {
+      if (singleRow === 0) {
+        table += '<thead class="csvtable-firstrow">';
+        table += '<tr>';
+      } else {
+        table += '<tr>';
+      }
+      // create table split ; or ,
+      var rowCells = allRows[singleRow].split(';');
+      for (var rowCell = 0; rowCell < rowCells.length; rowCell++) {
+        if (singleRow === 0) {
+          table += '<th>';
+          table += rowCells[rowCell];
+          table += '</th>';
+        } else {
+          table += '<td>';
+          table += rowCells[rowCell];
+          table += '</td>';
+        }
+      }
+      if (singleRow === 0) {
+        table += '</tr>';
+        table += '</thead>';
+        table += '<tbody>';
+      } else {
+        table += '</tr>';
+      }
+    } 
+    table += '</tbody>';
+    table += '</table>';
+    $('body').append(table);
+  }
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+<script>
+  // ajax select csv
+    $.ajax({
+    url: 'CATALOGO.csv',
+    dataType: 'text',
+    }).done(successFunction);
+</script>
+<script>
+  // keyup on
+  $(document).ready(function(){
+  $("#Buscar").keyup(function(){
+    _this = this;
+    //show the rows that match 
+    $.each($("#Mitabla tbody tr"), function() {
+    if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
+    $(this).hide();
+    else
+    $(this).show();
+    });
+  });
+ });
+ </script>
+</html>
